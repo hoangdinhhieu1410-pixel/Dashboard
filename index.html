@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard quản lý vận hành B2B Giao Hàng Nhanh">
+    <title>GHN B2B Dashboard - Bảng Điều Khiển Vận Hành</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- ====== SIDEBAR ====== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">📦</span>
+                    <div>
+                        <div class="logo-text">GHN</div>
+                        <div class="logo-sub">B2B Dashboard</div>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul id="menu-list">
+                    <li class="menu-item active" data-target="tong-quan">
+                        <span class="material-icons-outlined">dashboard</span><span>Tổng quan</span>
+                    </li>
+                    <li class="menu-item" data-target="nang-suat">
+                        <span class="material-icons-outlined">speed</span><span>Năng suất NV</span>
+                    </li>
+                    <li class="menu-item" data-target="con-cung">
+                        <span class="material-icons-outlined">storefront</span><span>Con Cưng</span>
+                    </li>
+                    <li class="menu-item" data-target="data-push">
+                        <span class="material-icons-outlined">local_shipping</span><span>Push giao B2B</span>
+                    </li>
+                    <li class="menu-item" data-target="data-ton">
+                        <span class="material-icons-outlined">inventory_2</span><span>Data tồn 3 ngày</span>
+                    </li>
+                    <li class="menu-item" data-target="canh-bao">
+                        <span class="material-icons-outlined">warning_amber</span><span>Data cảnh báo</span>
+                    </li>
+                    <li class="menu-item" data-target="data-gtc">
+                        <span class="material-icons-outlined">check_circle</span><span>Data GTC</span>
+                    </li>
+                    <li class="menu-item" data-target="gan-ontime">
+                        <span class="material-icons-outlined">schedule</span><span>Gán Ontime</span>
+                    </li>
+                    <li class="menu-item" data-target="ontime-toan-trinh">
+                        <span class="material-icons-outlined">fact_check</span><span>Ontime toàn trình</span>
+                    </li>
+                    <li class="menu-item" data-target="luong-nvxl">
+                        <span class="material-icons-outlined">payments</span><span>Lương NVXL</span>
+                    </li>
+                    <li class="menu-item" data-target="don-tao">
+                        <span class="material-icons-outlined">add_shopping_cart</span><span>Đơn tạo</span>
+                    </li>
+                    <li class="menu-item" data-target="tra-hang">
+                        <span class="material-icons-outlined">assignment_return</span><span>Trả hàng</span>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <span>Dashboard v3.0 — GHN B2B</span>
+            </div>
+        </aside>
+
+        <!-- ====== MAIN ====== -->
+        <main class="main-content" id="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="btn btn-icon sidebar-toggle" id="btn-sidebar">
+                        <span class="material-icons-outlined">menu</span>
+                    </button>
+                    <h1 id="page-title">Tổng quan</h1>
+                </div>
+                <div class="header-right">
+                    <div id="ai-status" class="ai-status">
+                        <span class="material-icons-outlined">smart_toy</span>
+                        <span>AI Chưa có key</span>
+                    </div>
+                    <button id="btn-refresh" class="btn btn-outline" title="Tải lại dữ liệu">
+                        <span class="material-icons-outlined">refresh</span>
+                        <span class="btn-label">Cập nhật Data</span>
+                    </button>
+                    <button id="btn-telegram" class="btn btn-primary" title="Gửi báo cáo Telegram">
+                        <span class="material-icons-outlined">send</span>
+                        <span class="btn-label">Gửi Telegram</span>
+                    </button>
+                    <button id="btn-settings" class="btn btn-icon" title="Cài đặt">
+                        <span class="material-icons-outlined">settings</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Loading overlay -->
+            <div id="loading" class="loading-overlay hidden">
+                <div class="spinner"></div>
+                <p style="margin-top:16px;color:#718096;font-size:14px">Đang tải dữ liệu...</p>
+            </div>
+
+            <!-- Nội dung trang -->
+            <div class="page-content" id="page-container"></div>
+        </main>
+    </div>
+
+    <!-- ====== MODAL CÀI ĐẶT ====== -->
+    <div id="modal-settings" class="modal hidden">
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        <div class="modal-dialog">
+            <div class="modal-title">⚙️ Cấu hình hệ thống</div>
+            <div class="form-group">
+                <label for="inp-tg-token">🤖 Telegram Bot Token</label>
+                <input type="password" id="inp-tg-token" placeholder="Nhập token bot">
+            </div>
+            <div class="form-group">
+                <label for="inp-tg-chat">💬 Telegram Chat ID</label>
+                <input type="text" id="inp-tg-chat" placeholder="Nhập chat ID">
+            </div>
+            <div class="form-group">
+                <label for="inp-gemini">🧠 Gemini API Key</label>
+                <input type="password" id="inp-gemini" placeholder="Nhập API key để bật AI phân tích">
+                <small>Lấy miễn phí tại <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a></small>
+            </div>
+            <button id="btn-save-settings" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">
+                💾 Lưu cấu hình
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts (thứ tự quan trọng) -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/charts.js"></script>
+    <script src="assets/js/telegram.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/pages.js"></script>
+</body>
+</html>
