@@ -361,4 +361,9 @@ const UI = (() => {
 })();
 
 // ====== KHỞI CHẠY ======
-document.addEventListener('DOMContentLoaded', () => UI.init());
+document.addEventListener('DOMContentLoaded', () => {
+    // Chỉ init UI khi đã đăng nhập
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+        UI.init();
+    }
+});

@@ -1492,5 +1492,237 @@ canvas {
 }
 
 /* ============================================================
+   25. LOGIN SCREEN – Màn hình đăng nhập
+   ============================================================ */
+.login-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%);
+  overflow: hidden;
+}
+
+.login-screen.hidden { display: none; }
+
+/* Background shapes */
+.login-bg { position: absolute; inset: 0; overflow: hidden; }
+.login-bg-shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.08;
+  animation: loginFloat 20s infinite ease-in-out;
+}
+.shape-1 {
+  width: 500px; height: 500px;
+  background: #F26522;
+  top: -100px; right: -100px;
+  animation-delay: 0s;
+}
+.shape-2 {
+  width: 400px; height: 400px;
+  background: #3B82F6;
+  bottom: -80px; left: -80px;
+  animation-delay: -7s;
+}
+.shape-3 {
+  width: 300px; height: 300px;
+  background: #10B981;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -14s;
+}
+
+@keyframes loginFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -30px) scale(1.05); }
+  50% { transform: translate(-20px, 20px) scale(0.95); }
+  75% { transform: translate(10px, 10px) scale(1.02); }
+}
+
+/* Login card */
+.login-card {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 48px 40px;
+  width: 420px;
+  max-width: 92vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+  animation: loginCardIn 0.5s ease;
+}
+
+@keyframes loginCardIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Logo */
+.login-logo { text-align: center; margin-bottom: 32px; }
+.login-logo-icon { font-size: 56px; margin-bottom: 12px; }
+.login-title {
+  font-size: 24px; font-weight: 800; color: #1A202C;
+  letter-spacing: -0.5px;
+}
+.login-subtitle {
+  font-size: 14px; color: #718096; margin-top: 4px;
+}
+
+/* Divider */
+.login-divider {
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+}
+.login-divider::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: #E2E8F0;
+}
+.login-divider-text {
+  position: relative;
+  background: rgba(255,255,255,0.95);
+  padding: 0 16px;
+  font-size: 13px;
+  color: #718096;
+  font-weight: 500;
+}
+
+/* Google button wrapper */
+.login-google-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  min-height: 44px;
+}
+
+/* Email fallback */
+.login-fallback { margin-top: 8px; }
+.login-fallback-label {
+  font-size: 13px; color: #718096; margin-bottom: 10px; text-align: center;
+}
+.login-input-group {
+  position: relative;
+  margin-bottom: 12px;
+}
+.login-input-icon {
+  position: absolute;
+  left: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: #A0AEC0;
+  font-size: 20px;
+}
+.login-input {
+  width: 100%;
+  padding: 14px 16px 14px 46px;
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #1A202C;
+  transition: all 0.2s;
+  background: #FAFBFC;
+  box-sizing: border-box;
+}
+.login-input:focus {
+  outline: none;
+  border-color: #F26522;
+  box-shadow: 0 0 0 4px rgba(242,101,34,0.1);
+  background: #FFFFFF;
+}
+.login-input::placeholder { color: #CBD5E0; }
+
+/* Login button */
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #F26522 0%, #D4510E 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(242,101,34,0.3);
+}
+.btn-login:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(242,101,34,0.4);
+}
+.btn-login:active { transform: translateY(0); }
+.btn-login .material-icons-outlined { font-size: 20px; }
+
+/* Error message */
+.login-error {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: #991B1B;
+  text-align: center;
+  line-height: 1.5;
+}
+.login-error.hidden { display: none; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+.shake { animation: shake 0.5s ease; }
+
+/* Footer */
+.login-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 24px;
+  font-size: 12px;
+  color: #A0AEC0;
+}
+
+/* ============================================================
+   26. USER INFO – Thông tin người dùng trên header
+   ============================================================ */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  background: #F8FAFC;
+  border-radius: 24px;
+  border: 1px solid #E2E8F0;
+}
+.user-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.user-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================================
    KẾT THÚC – style.css
    ============================================================ */

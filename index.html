@@ -9,9 +9,75 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-    <div class="app">
+
+    <!-- ====== MÀN HÌNH ĐĂNG NHẬP ====== -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-bg">
+            <div class="login-bg-shape shape-1"></div>
+            <div class="login-bg-shape shape-2"></div>
+            <div class="login-bg-shape shape-3"></div>
+        </div>
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="login-logo-icon">📦</div>
+                <h1 class="login-title">GHN B2B Dashboard</h1>
+                <p class="login-subtitle">Bảng Điều Khiển Vận Hành Nội Bộ</p>
+            </div>
+
+            <div class="login-divider">
+                <span class="login-divider-text">Đăng nhập bằng tài khoản GHN</span>
+            </div>
+
+            <!-- Google Sign-In Button -->
+            <div class="login-google-wrapper">
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleGoogleCallback"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left"
+                     data-width="320">
+                </div>
+            </div>
+
+            <!-- Nút đăng nhập thay thế (khi chưa có Google Client ID) -->
+            <div class="login-fallback">
+                <p class="login-fallback-label">Hoặc nhập email @ghn.vn của bạn:</p>
+                <div class="login-input-group">
+                    <span class="material-icons-outlined login-input-icon">email</span>
+                    <input type="email" id="login-email" class="login-input"
+                           placeholder="ten.nv@ghn.vn" autocomplete="email">
+                </div>
+                <button id="btn-login-email" class="btn-login">
+                    <span class="material-icons-outlined">login</span>
+                    Đăng nhập
+                </button>
+            </div>
+
+            <!-- Thông báo lỗi -->
+            <div id="login-error" class="login-error hidden"></div>
+
+            <div class="login-footer">
+                <span class="material-icons-outlined" style="font-size:14px">lock</span>
+                Chỉ cho phép email <strong>@ghn.vn</strong> truy cập
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== DASHBOARD (ẩn cho đến khi đăng nhập) ====== -->
+    <div id="dashboard-app" class="app hidden">
         <!-- ====== SIDEBAR ====== -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -93,6 +159,11 @@
                     <button id="btn-settings" class="btn btn-icon" title="Cài đặt">
                         <span class="material-icons-outlined">settings</span>
                     </button>
+                    <!-- User info + Đăng xuất -->
+                    <div id="user-info" class="user-info"></div>
+                    <button id="btn-logout" class="btn btn-icon" title="Đăng xuất" onclick="Auth.logout()">
+                        <span class="material-icons-outlined">logout</span>
+                    </button>
                 </div>
             </header>
 
@@ -133,10 +204,69 @@
 
     <!-- Scripts (thứ tự quan trọng) -->
     <script src="assets/js/config.js"></script>
+    <script src="assets/js/auth.js"></script>
     <script src="assets/js/data.js"></script>
     <script src="assets/js/charts.js"></script>
     <script src="assets/js/telegram.js"></script>
     <script src="assets/js/ui.js"></script>
     <script src="assets/js/pages.js"></script>
+
+    <!-- Login email fallback script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Kiểm tra đăng nhập trước
+        Auth.init();
+
+        // Xử lý đăng nhập bằng email (fallback khi chưa có Google Client ID)
+        const btnLogin = document.getElementById('btn-login-email');
+        const inputEmail = document.getElementById('login-email');
+
+        if (btnLogin) {
+            btnLogin.addEventListener('click', function() {
+                const email = inputEmail.value.trim().toLowerCase();
+                if (!email) {
+                    _showError('⚠️ Vui lòng nhập email');
+                    return;
+                }
+                // Kiểm tra format email
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    _showError('⚠️ Email không đúng định dạng');
+                    return;
+                }
+                // Kiểm tra domain
+                const domain = email.split('@')[1];
+                if (domain !== 'ghn.vn') {
+                    _showError('⛔ Chỉ chấp nhận email <strong>@ghn.vn</strong>.<br>Email <strong>' + email + '</strong> không được phép truy cập.');
+                    return;
+                }
+                // Lưu session
+                const session = {
+                    email: email,
+                    name: email.split('@')[0],
+                    picture: '',
+                    loginTime: Date.now()
+                };
+                sessionStorage.setItem('ghn_auth_session', JSON.stringify(session));
+                // Reload
+                window.location.reload();
+            });
+        }
+
+        if (inputEmail) {
+            inputEmail.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') btnLogin.click();
+            });
+        }
+
+        function _showError(msg) {
+            const el = document.getElementById('login-error');
+            el.innerHTML = msg;
+            el.classList.remove('hidden');
+            el.classList.remove('shake');
+            void el.offsetWidth;
+            el.classList.add('shake');
+        }
+    });
+    </script>
 </body>
 </html>
